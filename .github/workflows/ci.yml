@@ -93,7 +93,7 @@ jobs:
             -Dsonar.login=${{ env.SONAR_TOKEN }}
 
       - name: Salvar Relatórios como Artefatos
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sonar-reports
           path: target/sonar
