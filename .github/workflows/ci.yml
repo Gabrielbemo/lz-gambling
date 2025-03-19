@@ -61,9 +61,9 @@ jobs:
           SONAR_JDBC_URL: jdbc:postgresql://postgres:5432/sonarqube
           SONAR_JDBC_USERNAME: sonar
           SONAR_JDBC_PASSWORD: sonar
-          SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
         ports:
           - "9000:9000"
+        mem_limit: 2g
 
     steps:
       - name: Checkout do código
@@ -90,7 +90,7 @@ jobs:
       - name: Aguardar SonarQube iniciar
         run: |
           echo "Aguardando SonarQube iniciar..."
-          for i in {1..30}; do
+          for i in {1..60}; do
             if curl -s http://localhost:9000/api/system/status | grep -q "UP"; then
               echo "SonarQube está pronto!"
               exit 0
