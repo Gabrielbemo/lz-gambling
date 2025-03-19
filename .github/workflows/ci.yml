@@ -43,7 +43,7 @@ jobs:
     services:
       postgres:
         image: postgres:13
-        environment:
+        env:
           POSTGRES_USER: sonar
           POSTGRES_PASSWORD: sonar
           POSTGRES_DB: sonarqube
