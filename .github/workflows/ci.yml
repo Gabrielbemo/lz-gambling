@@ -49,9 +49,6 @@ jobs:
           POSTGRES_DB: sonarqube
         ports:
           - 5432:5432
-        volumes:
-          - sonar_db:/var/lib/postgresql
-          - sonar_db_data:/var/lib/postgresql/data
       sonarqube:
         image: sonarqube:lts-community
         env:
@@ -60,21 +57,6 @@ jobs:
           SONAR_JDBC_PASSWORD: sonar
         ports:
           - "9001:9000"
-        volumes:
-          - sonarqube_conf:/opt/sonarqube/conf
-          - sonarqube_data:/opt/sonarqube/data
-          - sonarqube_extensions:/opt/sonarqube/extensions
-          - sonarqube_logs:/opt/sonarqube/logs
-          - sonarqube_temp:/opt/sonarqube/temp
-
-    volumes:
-      sonarqube_conf:
-      sonarqube_data:
-      sonarqube_extensions:
-      sonarqube_logs:
-      sonarqube_temp:
-      sonar_db:
-      sonar_db_data:
 
     steps:
       - name: Checkout do código
