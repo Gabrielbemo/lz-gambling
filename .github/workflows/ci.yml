@@ -41,22 +41,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_USER: sonar
-          POSTGRES_PASSWORD: sonar
-          POSTGRES_DB: sonarqube
-        ports:
-          - 5432:5432
       sonarqube:
         image: sonarqube:lts-community
+        options: >-
+          --health-cmd "curl -f http://localhost:9000/api/system/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         env:
-          SONAR_JDBC_URL: jdbc:postgresql://postgres:5432/sonar
-          SONAR_JDBC_USERNAME: sonar
-          SONAR_JDBC_PASSWORD: sonar
+          SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
         ports:
-          - "9001:9000"
+          - "9000:9000"
 
     steps:
       - name: Checkout do código
@@ -67,18 +62,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-
-      - name: Aguardar PostgreSQL iniciar
-        run: |
-          echo "Aguardando PostgreSQL iniciar..."
-          for i in {1..30}; do
-            if curl -s http://postgres:5432 | grep -q "postgres"; then
-              echo "PostgreSQL está pronto!"
-              exit 0
-            fi
-            sleep 5
-          done
-          echo "Erro: PostgreSQL não inicializou a tempo!" && exit 1
 
       - name: Aguardar SonarQube iniciar
         run: |
