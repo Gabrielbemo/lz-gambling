@@ -63,7 +63,7 @@ jobs:
       - name: Aguardar SonarQube iniciar
         run: |
           echo "Aguardando SonarQube iniciar..."
-          for i in {1..30}; do
+          for i in {1..90}; do
             if curl -s http://localhost:9000/api/system/status | grep -q "UP"; then
               echo "SonarQube está pronto!"
               exit 0
