@@ -49,9 +49,11 @@ jobs:
           POSTGRES_DB: sonarqube
         ports:
           - 5432:5432
+        volumes:
+          - sonar_db:/var/lib/postgresql
+          - sonar_db_data:/var/lib/postgresql/data
       sonarqube:
         image: sonarqube:lts-community
-        needs: sonar_db
         env:
           SONAR_JDBC_URL: jdbc:postgresql://sonar_db:5432/sonar
           SONAR_JDBC_USERNAME: sonar
@@ -64,16 +66,6 @@ jobs:
           - sonarqube_extensions:/opt/sonarqube/extensions
           - sonarqube_logs:/opt/sonarqube/logs
           - sonarqube_temp:/opt/sonarqube/temp
-
-        sonar_db:
-          image: postgres:13
-          env:
-            POSTGRES_USER: sonar
-            POSTGRES_PASSWORD: sonar
-            POSTGRES_DB: sonar
-          volumes:
-            - sonar_db:/var/lib/postgresql
-            - sonar_db_data:/var/lib/postgresql/data
 
     volumes:
       sonarqube_conf:
