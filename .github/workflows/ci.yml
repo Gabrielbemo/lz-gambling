@@ -41,6 +41,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     services:
+      postgres:
+        image: postgres:13
+        environment:
+          POSTGRES_USER: sonar
+          POSTGRES_PASSWORD: sonar
+          POSTGRES_DB: sonarqube
+        ports:
+          - 5432:5432
       sonarqube:
         image: sonarqube:lts-community
         options: >-
@@ -65,7 +73,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-
 
       - name: Criar Token Admin do SonarQube
         run: |
