@@ -51,11 +51,6 @@ jobs:
           - 5432:5432
       sonarqube:
         image: sonarqube:lts-community
-        options: >-
-          --health-cmd "curl -f http://localhost:9000/api/system/health || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
         env:
           SONAR_JDBC_URL: jdbc:postgresql://postgres:5432/sonarqube
           SONAR_JDBC_USERNAME: sonar
