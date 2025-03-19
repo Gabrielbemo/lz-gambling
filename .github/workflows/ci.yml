@@ -63,7 +63,6 @@ jobs:
           SONAR_JDBC_PASSWORD: sonar
         ports:
           - "9000:9000"
-        mem_limit: 2g
 
     steps:
       - name: Checkout do código
