@@ -65,43 +65,55 @@ jobs:
         ports:
           - "9000:9000"
 
-      steps:
-        - name: Checkout do código
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
 
-        - name: Configurar JDK 21
-          uses: actions/setup-java@v3
-          with:
-            distribution: 'temurin'
-            java-version: '21'
+      - name: Configurar JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
-        - name: Aguardar SonarQube iniciar
-          run: |
-            echo "Aguardando SonarQube iniciar..."
-            for i in {1..30}; do
-              if curl -s http://localhost:9000/api/system/status | grep -q "UP"; then
-                echo "SonarQube está pronto!"
-                exit 0
-              fi
-              sleep 5
-            done
-            echo "Erro: SonarQube não inicializou a tempo!" && exit 1
+      - name: Aguardar PostgreSQL iniciar
+        run: |
+          echo "Aguardando PostgreSQL iniciar..."
+          for i in {1..30}; do
+            if curl -s http://postgres:5432 | grep -q "postgres"; then
+              echo "PostgreSQL está pronto!"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Erro: PostgreSQL não inicializou a tempo!" && exit 1
 
-        - name: Criar Token Admin do SonarQube
-          run: |
-            curl -u admin:admin -X POST "http://localhost:9000/api/user_tokens/generate" \
-              -d "name=admin_token" | jq -r '.token' > sonar_token.txt
-            echo "SONAR_TOKEN=$(cat sonar_token.txt)" >> $GITHUB_ENV
+      - name: Aguardar SonarQube iniciar
+        run: |
+          echo "Aguardando SonarQube iniciar..."
+          for i in {1..30}; do
+            if curl -s http://localhost:9000/api/system/status | grep -q "UP"; then
+              echo "SonarQube está pronto!"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Erro: SonarQube não inicializou a tempo!" && exit 1
 
-        - name: Compilar e rodar testes
-          run: mvn clean verify
+      - name: Criar Token Admin do SonarQube
+        run: |
+          curl -u admin:admin -X POST "http://localhost:9000/api/user_tokens/generate" \
+            -d "name=admin_token" | jq -r '.token' > sonar_token.txt
+          echo "SONAR_TOKEN=$(cat sonar_token.txt)" >> $GITHUB_ENV
 
-        - name: Rodar análise com SonarQube
-          run: |
-            mvn sonar:sonar \
-              -Dsonar.host.url=http://localhost:9000 \
-              -Dsonar.login=${{ env.SONAR_TOKEN }}
+      - name: Compilar e rodar testes
+        run: mvn clean verify
 
-        - name: Parar SonarQube
-          if: always()
-          run: docker stop $(docker ps -q --filter ancestor=sonarqube:lts-community)
+      - name: Rodar análise com SonarQube
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.login=${{ env.SONAR_TOKEN }}
+
+      - name: Parar SonarQube
+        if: always()
+        run: docker stop $(docker ps -q --filter ancestor=sonarqube:lts-community)
