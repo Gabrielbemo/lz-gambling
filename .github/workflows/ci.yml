@@ -51,9 +51,8 @@ jobs:
           - 5432:5432
       sonarqube:
         image: sonarqube:lts-community
-        depends_on:
-          - sonar_db
-        environment:
+        needs: sonar_db
+        env:
           SONAR_JDBC_URL: jdbc:postgresql://sonar_db:5432/sonar
           SONAR_JDBC_USERNAME: sonar
           SONAR_JDBC_PASSWORD: sonar
@@ -68,7 +67,7 @@ jobs:
 
         sonar_db:
           image: postgres:13
-          environment:
+          env:
             POSTGRES_USER: sonar
             POSTGRES_PASSWORD: sonar
             POSTGRES_DB: sonar
