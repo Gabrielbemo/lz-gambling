@@ -60,17 +60,6 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Aguardar SonarQube iniciar
-        run: |
-          echo "Aguardando SonarQube iniciar..."
-          for i in {1..90}; do
-            if curl -s http://localhost:9000/api/system/status | grep -q "UP"; then
-              echo "SonarQube está pronto!"
-              exit 0
-            fi
-            sleep 5
-          done
-          echo "Erro: SonarQube não inicializou a tempo!" && exit 1
 
       - name: Criar Token Admin do SonarQube
         run: |
