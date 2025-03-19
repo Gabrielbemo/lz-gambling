@@ -69,6 +69,14 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Wait for SonarQube to be ready
+        run: |
+          until curl -sSf http://localhost:9000/api/system/status | grep -q '"status":"UP"'; do
+            echo "Waiting for SonarQube to start..."
+            sleep 10
+          done
+          echo "SonarQube is ready!"
+
       - name: Criar Token Admin do SonarQube
         run: |
           curl -u admin:admin -X POST "http://localhost:9000/api/user_tokens/generate" \
