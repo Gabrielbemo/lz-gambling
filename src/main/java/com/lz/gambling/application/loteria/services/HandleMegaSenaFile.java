@@ -1,5 +1,6 @@
 package com.lz.gambling.application.loteria.services;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,15 @@ import java.util.stream.Stream;
 @Service
 public class HandleMegaSenaFile {
 
-    private final Path rootLocation;
-    private String location = "/tmp/";
+    private Path rootLocation;
+    @Value("#{'${host.local}'=='windows' ? '${app.temp_file.windows}' : '${app.temp_file.linux}'}")
+    private String location;
 
-    public HandleMegaSenaFile() {
-        this.rootLocation = Paths.get(location);
+    public Path getLocation(){
+        if(rootLocation == null){
+            this.rootLocation = Paths.get(location);
+        }
+        return rootLocation;
     }
 
     public void store(MultipartFile file) {
@@ -31,11 +36,11 @@ public class HandleMegaSenaFile {
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file.");
             }
-            Path destinationFile = this.rootLocation
+            Path destinationFile = this.getLocation()
                     .resolve(Paths.get(Objects.requireNonNull(file.getOriginalFilename())))
                     .normalize().toAbsolutePath();
 
-            if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
+            if (!destinationFile.getParent().equals(this.getLocation().toAbsolutePath())) {
                 // This is a security check
                 throw new StorageException(
                         "Cannot store file outside current directory.");
@@ -52,9 +57,9 @@ public class HandleMegaSenaFile {
 
     public Stream<Path> loadAll() {
         try {
-            return Files.walk(this.rootLocation, 1)
-                    .filter(path -> !path.equals(this.rootLocation))
-                    .map(this.rootLocation::relativize);
+            return Files.walk(this.getLocation(), 1)
+                    .filter(path -> !path.equals(this.getLocation()))
+                    .map(this.getLocation()::relativize);
         }
         catch (IOException e) {
             throw new StorageException("Failed to read stored files", e);
@@ -63,7 +68,7 @@ public class HandleMegaSenaFile {
     }
 
     public Path load(String filename) {
-        return rootLocation.resolve(filename);
+        return getLocation().resolve(filename);
     }
 
     public Resource loadAsResource(String filename) {
@@ -85,12 +90,12 @@ public class HandleMegaSenaFile {
     }
 
     public void deleteAll() {
-        FileSystemUtils.deleteRecursively(rootLocation.toFile());
+        FileSystemUtils.deleteRecursively(getLocation().toFile());
     }
 
     public void init() {
         try {
-            Files.createDirectories(rootLocation);
+            Files.createDirectories(getLocation());
         }
         catch (IOException e) {
             throw new StorageException("Could not initialize storage", e);

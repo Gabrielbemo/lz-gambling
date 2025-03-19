@@ -19,6 +19,7 @@ public class MegaSenaDrawsEntity {
     private LocalDate dataSorteio;
     private int bola1, bola2, bola3, bola4, bola5, bola6;
     private int ganhadores6;
+    @Column(length = 555)
     private String cidadeUF;
     private double rateio6;
     private int ganhadores5;
