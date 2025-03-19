@@ -74,6 +74,18 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Aguardar PostgreSQL iniciar
+        run: |
+          echo "Aguardando PostgreSQL iniciar..."
+          for i in {1..30}; do
+            if curl -s http://postgres:5432 | grep -q "postgres"; then
+              echo "PostgreSQL está pronto!"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Erro: PostgreSQL não inicializou a tempo!" && exit 1
+
       - name: Aguardar SonarQube iniciar
         run: |
           echo "Aguardando SonarQube iniciar..."
