@@ -96,7 +96,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sonar-reports
-          path: target/sonar
+          path: target/site/sonar
 
       - name: Parar SonarQube
         if: always()
