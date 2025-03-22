@@ -110,7 +110,7 @@ jobs:
       # - name: verifica o login do docker
       #   run: docker info
       - name: Pull na imagem
-        run: docker pull gabrielbemo/lz-gambling:pr-5-86d8abb
+        run: sudo docker pull gabrielbemo/lz-gambling:pr-5-86d8abb
       - name: Run docker container
         run: docker run -d -p 8080:8080 --name gambling gabrielbemo/lz-gambling
         
