@@ -106,9 +106,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Login Docker Hub
-        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-      - name: Pull image from docker hub
-        run: sudo docker pull gabrielbemo/lz-gambling:pr-5-86d8abb
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}} && sudo docker pull gabrielbemo/lz-gambling:pr-5-86d8abb
       - name: Run docker container
         run: docker run -d -p 8080:8080 --name gambling gabrielbemo/lz-gambling
         
