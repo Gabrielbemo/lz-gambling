@@ -105,12 +105,14 @@ jobs:
     # needs: build
     runs-on: self-hosted
     steps:
-      # - name: Login Docker Hub
-      #   run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-      # - name: verifica o login do docker
-      #   run: docker info
+      - name: Login Docker Hub
+        run: sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+        
+      - name: verifica o login do docker
+        run: sudo docker info
+        
       - name: Pull na imagem
         run: sudo docker pull gabrielbemo/lz-gambling:pr-5-86d8abb
-      - name: Run docker container
-        run: docker run -d -p 8080:8080 --name gambling gabrielbemo/lz-gambling
         
+      - name: Run docker container
+        run: sudo docker stop gambling || true && sudo docker rm gambling || true && sudo docker run -d -p 8080:8080 --name gambling gabrielbemo/lz-gambling:pr-5-86d8abb     
