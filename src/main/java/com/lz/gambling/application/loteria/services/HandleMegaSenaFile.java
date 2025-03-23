@@ -21,7 +21,12 @@ import java.util.stream.Stream;
 public class HandleMegaSenaFile {
 
     private Path rootLocation;
-    @Value("#{'${host.local}'=='windows' ? '${app.temp_file.windows}' : '${app.temp_file.linux}'}")
+    //@Value("#{'${host.local}'=='windows' ? '${app.temp_file.windows}' : '${host.local}'=='linux' ? '${app.temp_file" +
+    //        ".linux}' : '${app.temp_file.docker}'}")
+
+    @Value("${app.temp_file.docker}")
+    //@Value("${host.local}=='windows' ? ${app.temp_file.windows} : ${host.local}=='linux' ? ${app.temp_file" +
+    //        ".linux} : ${app.temp_file.docker}}")
     private String location;
 
     public Path getLocation(){
