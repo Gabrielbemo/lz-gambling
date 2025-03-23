@@ -108,7 +108,7 @@ jobs:
       - name: Login Docker Hub
         run: sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
         
-      - name: verifica o login do docker
+      - name: verifica o login docker
         run: sudo docker info
         
       - name: Pull na imagem
